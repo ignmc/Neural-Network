@@ -1,36 +1,60 @@
 from argparse import ArgumentError
+import random
+
+from neural_layer import NeuralLayer
+from sigmoid_neuron import SigmoidNeuron
 
 
 class NeuralNetwork:
-    def __init__(self, first_layer=None, layers=None):
+
+
+
+    def __init__(self, first_layer=None, layers=None, layers_sizes=None):
+
+        def connect_layers(layers_list):
+            for i in range(len(layers_list) - 1):
+                layers_list[i].next_layer = layers_list[i + 1]
+                layers_list[i + 1].previous_layer = layers_list[i]
+            return layers_list[0], layers_list[-1]
+
         if layers is None:
             if first_layer is None:
-                raise ArgumentError("No layers supplied")
+                if layers_sizes is None:
+                    raise ArgumentError("No layers specified")
+                else:
+                    layers = []
+                    for i in range(len(layers_sizes) - 1):
+                        input_size = layers_sizes[i]
+                        layer_size = layers_sizes[i+1]
+                        neurons = []
+                        for j in range(layer_size):
+                            weights = [random.uniform(-2, 2) for _ in range(input_size)]
+                            bias = random.uniform(-2, 2)
+                            neurons.append(SigmoidNeuron(weights, bias))
+                        layers.append(NeuralLayer(neurons))
 
-            # Case: only the first layer of an already built network was supplied
-            self.first_layer = first_layer
-            temp_layer = first_layer
-            while temp_layer.next_layer is not None:  # Find the output layer
-                temp_layer = temp_layer.next_layer
-            self.last_layer = temp_layer
+                    self.first_layer, self.output_layer = connect_layers(layers)
+            else:
+                # Case: only the first layer of an already built network was supplied
+                self.first_layer = first_layer
+                temp_layer = first_layer
+                while temp_layer.next_layer is not None:  # Find the output layer
+                    temp_layer = temp_layer.next_layer
+                self.last_layer = temp_layer
         else:
             # All the layers were supplied. Let's connect them in the same order they are listed
-            for i, in range(len(layers) - 1):
-                layers[i].next_layer = layers[i+1]
-                layers[i+1].previous_layer = layers[i]
-            self.first_layer = layers[0]
-            self.output_layer = layers[-1]
+            self.first_layer, self.output_layer = connect_layers(layers)
 
     def feed(self, inputs):
         return self.first_layer.feed(inputs)
 
     def backward_propagate_error(self, expected_outputs):
-        self.last_layer.backward_propagate_error(expected_outputs)
+        self.output_layer.backward_propagate_error(expected_outputs)
 
-    def update_weights(self, inputs, leraning_rate):
-        self.first_layer.update_weights(inputs)
+    def update_weights(self, inputs, learning_rate):
+        self.first_layer.update_weights_and_bias(inputs, learning_rate)
 
     def train(self, inputs, expected_outputs, learning_rate):
         outputs = self.feed(inputs)
-        self.backwards_propagate_error(expected_outputs)
+        self.backward_propagate_error(expected_outputs)
         self.update_weights(inputs, learning_rate)

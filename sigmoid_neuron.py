@@ -25,7 +25,13 @@ class SigmoidNeuron:
         self.bias += (self.lr * diff)
 
     def adjust_delta_with(self, error):
-        self.delta = error * (self.output * (1 - self.output))
+         self.delta = error * (self.output * (1 - self.output))
 
     def adjust_weights_with_input(self, inputs, lr):
-        for weight
+        for i in range(len(self.weights)):
+            self.weights[i] += lr * self.delta * inputs[i]
+
+    def adjust_bias_using_learning_rate(self, lr):
+        self.bias += lr * self.delta
+
+
