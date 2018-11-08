@@ -1,8 +1,8 @@
 from argparse import ArgumentError
 import random
 
-from neural_layer import NeuralLayer
-from sigmoid_neuron import SigmoidNeuron
+from NN.neural_layer import NeuralLayer
+from NN.sigmoid_neuron import SigmoidNeuron
 
 
 class NeuralNetwork:

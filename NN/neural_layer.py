@@ -1,6 +1,3 @@
-from sigmoid_neuron import SigmoidNeuron
-
-
 class NeuralLayer:
     def __init__(self, neurons, previous_layer=None, next_layer=None):
         self.neurons = neurons
