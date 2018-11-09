@@ -5,8 +5,17 @@ def normalize(x, dl, dh, nl, nh):
     return ((x - dl) * (nh - nl)) / (dh - dl) + nl
 
 
+def encode_expected(possible_outputs):
+    possible_outputs.sort()
+    d = {}
+    for output in possible_outputs:
+        encoded = [1 if output == it_output else 0 for it_output in possible_outputs]
+        d[output] = encoded
+    return d
+
 def get_processed_data(filename):
     df = pd.read_csv(filename, sep=';')
+    df = df.sample(frac=1)
     labels = df['quality']
     df = df.drop('quality', axis=1)
 
@@ -20,9 +29,8 @@ def get_processed_data(filename):
             x = df[column_name][i]
             df.at[i, column_name] = normalize(x, dl, dh, nl, nh)
 
-    df = df.sample(frac=1)
-    n_rows = df.shape[0]
-    train = df.iloc[:n_rows//2, :]
-    query = df.iloc[n_rows//2:, :]
+    un = labels.unique()
+    encoded = encode_expected(un)
 
-    return train, query
+    labels = [encoded[label] for label in labels]
+    return df.values, labels
