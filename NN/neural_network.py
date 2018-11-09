@@ -7,8 +7,6 @@ from NN.sigmoid_neuron import SigmoidNeuron
 
 class NeuralNetwork:
 
-
-
     def __init__(self, first_layer=None, layers=None, layers_sizes=None):
 
         def connect_layers(layers_list):
