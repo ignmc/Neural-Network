@@ -5,3 +5,5 @@ Una vez que las dependencias están instaladas se puede ejecutar el programa con
 Las dependencias utilizadas por el programa son pandas y matplotlib, y por supuesto también sus dependencias respectivas
 
 Probado con python 3.6
+
+https://github.com/ignmc/Neural-Network
